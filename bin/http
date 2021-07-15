@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types = 1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Uri;
+use Minibase\Http\Http;
+
+$http = new Http(
+    static fn () => new Request(),
+    static fn (...$args) => new JsonResponse(...$args),
+);
+$api = new Uri('https://jsonplaceholder.typicode.com');
+$response = $http->get($api->withPath('posts')->withQuery('?_limit=1'));
+
+dump(Http::OK === $response->getStatusCode());
