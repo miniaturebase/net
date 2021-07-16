@@ -11,10 +11,11 @@ use Laminas\Diactoros\Uri;
 use Minibase\Net\Http;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 $http = new Http(
-    static fn (): RequestInterface =>
-        new Request(headers: ['content-type' => 'application/json']),
+    static fn (string $method, UriInterface $uri): RequestInterface =>
+        new Request($uri, $method, headers: ['content-type' => 'application/json']),
     static fn (mixed $body, int $code): ResponseInterface =>
         new JsonResponse((is_string($body)) ? json_decode($body) : $body, $code),
 );
