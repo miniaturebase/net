@@ -130,11 +130,9 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
     /**
      * @inheritDoc
      */
-    public function post(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
+    public function post(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        $request = $this
-            ->createRequest(self::POST, $uri)
-            ->withHeader('content-type', $contentType);
+        $request = $this->createRequest(self::POST, $uri);
 
         if ($body instanceof StreamInterface) {
             $request->withBody($body);
@@ -149,11 +147,9 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
     /**
      * @inheritDoc
      */
-    public function put(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
+    public function put(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        $request = $this
-            ->createRequest(self::PUT, $uri)
-            ->withHeader('content-type', $contentType);
+        $request = $this->createRequest(self::PUT, $uri);
 
         if ($body instanceof StreamInterface) {
             $request->withBody($body);
@@ -168,11 +164,9 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
     /**
      * @inheritDoc
      */
-    public function patch(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
+    public function patch(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        $request = $this
-            ->createRequest(self::PATCH, $uri)
-            ->withHeader('content-type', $contentType);
+        $request = $this->createRequest(self::PATCH, $uri);
 
         if ($body instanceof StreamInterface) {
             $request->withBody($body);
