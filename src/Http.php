@@ -5,80 +5,34 @@ declare(strict_types = 1);
 namespace Minibase\Net;
 
 use Closure;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
+use Psr\Http\Message\UriInterface;
 use TypeError;
 
 /**
- * Make HTTP network requests
+ * Make HTTP network requests.
+ *
+ * @author Jordan Brauer
+ * @since 0.0.1
  */
-final class Http implements ClientInterface, HttpInterface
+final class Http implements HttpInterface, ClientInterface, RequestFactoryInterface, ResponseFactoryInterface
 {
     /**
      * Create a new HTTP handler.
      *
-     * @param Closure<RequestInterface> $request PSR-7 request instance factory
-     * @param Closure<ResponseInterface> $request PSR-7 response instance factory
+     * @param Closure<RequestInterface> $request PSR-17 request instance factory which generates PSR-7 requests
+     * @param Closure<ResponseInterface> $request PSR-17 response instance factory which generates PSR-7 responses
      */
     public function __construct(
-        /**
-         * PSR-7 request instance factory.
-         *
-         * @var Closure<RequestInterface>
-         */
         private Closure $request,
-
-        /**
-         * PSR-7 response instance factory.
-         *
-         * @var Closure<ResponseInterface>
-         */
         private Closure $response,
     ) {
         // ...
-    }
-
-    /**
-     * New request factory.
-     */
-    public function request(string $method = '', ?UriInterface $uri = null): RequestInterface
-    {
-        $response = ($this->request)($method, $uri);
-
-        if (!empty(trim($method))) {
-            $response = $response->withMethod($method);
-        }
-
-        if ($uri) {
-            $response = $response->withUri($uri);
-        }
-
-        return $response;
-    }
-
-    /**
-     * New response factory.
-     *
-     * @param string|resource|StreamInterface $body
-     * @param int $code
-     * @param array<string,mixed> $headers
-     */
-    public function response(mixed $body, int $code, array $headers = []): ResponseInterface
-    {
-        if (!\is_string($body) and !\is_resource($body) and !$body instanceof StreamInterface) {
-            throw new TypeError(sprintf(
-                'Arguments 1 passed to %s must be of the type %s, %s given',
-                __FUNCTION__,
-                implode('|', ['string', 'resource', StreamInterface::class]),
-                gettype($body),
-            ));
-        }
-
-        return ($this->response)($body, $code, $headers);
     }
 
     /**
@@ -89,11 +43,10 @@ final class Http implements ClientInterface, HttpInterface
         $handle = curl_init((string) $request->getUri());
 
         if (false === $handle) {
-            // FIXME: interface PSR-18 exception
-            throw new RuntimeException('Unable to make request!');
+            throw new RequestException($request);
         }
 
-        $method = strtoupper($request->getMethod());
+        $method = strtoupper(trim($request->getMethod()));
         $headers = $request->getHeaders();
 
         if ($method === self::GET) {
@@ -105,7 +58,11 @@ final class Http implements ClientInterface, HttpInterface
         }
 
         if (in_array($method, [self::POST, self::PUT, self::PATCH], true)) {
-            curl_setopt($handle, CURLOPT_POSTFIELDS, $request->getBody()->getContents());
+            curl_setopt(
+                $handle,
+                CURLOPT_POSTFIELDS,
+                $request->getBody()->getContents()
+            );
         }
 
         curl_setopt_array($handle, [
@@ -114,31 +71,34 @@ final class Http implements ClientInterface, HttpInterface
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_HTTPHEADER => array_map(
-                static fn (string $header, array $values) => sprintf(
-                    '%s: %s',
-                    $header,
-                    implode(',', $values),
-                ),
+                static fn (string $header, array $values) =>
+                    sprintf('%s: %s', $header, implode(',', $values)),
                 array_keys($headers),
                 $headers,
             ),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
+            CURLOPT_HEADER => false, # TODO: parse headers manually
         ]);
 
-        $response = curl_exec($handle);
+        $transfer = curl_exec($handle);
         $error = array_filter([curl_errno($handle), curl_error($handle)]);
 
         curl_close($handle);
 
-        if (false === $response or !empty($error)) {
-            // FIXME: interface PSR-18 exception
-            throw new RuntimeException('Unable to complete request!');
+        if (false === $transfer or !empty($error)) {
+            throw new NetworkException($request, $error[1], $error[0]);
         }
+
         # CURLINFO_EFFECTIVE_URL
         # CURLINFO_REQUEST_SIZE
+        $code = curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+        $response = $this->createResponse($code, self::PHRASES[$code] ?? '');
+        $body = $response->getBody();
 
-        return $this->response($response, curl_getinfo($handle, CURLINFO_RESPONSE_CODE), []);
+        $body->write($transfer);
+        $body->rewind();
+
+        return $response;
     }
 
     /**
@@ -146,7 +106,7 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function get(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request()->withMethod(self::GET)->withUri($uri));
+        return $this->sendRequest($this->createRequest(self::GET, $uri));
     }
 
     /**
@@ -154,7 +114,7 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function head(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request()->withMethod(self::HEAD)->withUri($uri));
+        return $this->sendRequest($this->createRequest(self::HEAD, $uri));
     }
 
     /**
@@ -163,16 +123,14 @@ final class Http implements ClientInterface, HttpInterface
     public function post(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
     {
         $request = $this
-            ->request()
-            ->withMethod(self::POST)
-            ->withUri($uri)
+            ->createRequest(self::POST, $uri)
             ->withHeader('content-type', $contentType);
 
-        if (\is_string($body)) {
+        if ($body instanceof StreamInterface) {
+            $request->withBody($body);
+        } else {
             $request->getBody()->write($body);
             $request->getBody()->rewind();
-        } else {
-            $request->withBody($body);
         }
 
         return $this->sendRequest($request);
@@ -183,7 +141,18 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function put(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        $request = $this
+            ->createRequest(self::PUT, $uri)
+            ->withHeader('content-type', $contentType);
+
+        if ($body instanceof StreamInterface) {
+            $request->withBody($body);
+        } else {
+            $request->getBody()->write($body);
+            $request->getBody()->rewind();
+        }
+
+        return $this->sendRequest($request);
     }
 
     /**
@@ -191,7 +160,18 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function patch(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        $request = $this
+            ->createRequest(self::PATCH, $uri)
+            ->withHeader('content-type', $contentType);
+
+        if ($body instanceof StreamInterface) {
+            $request->withBody($body);
+        } else {
+            $request->getBody()->write($body);
+            $request->getBody()->rewind();
+        }
+
+        return $this->sendRequest($request);
     }
 
     /**
@@ -199,7 +179,7 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function delete(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        return $this->sendRequest($this->createRequest(self::DELETE, $uri));
     }
 
     /**
@@ -207,7 +187,7 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function connect(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        return $this->sendRequest($this->createRequest(self::CONNECT, $uri));
     }
 
     /**
@@ -215,7 +195,7 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function options(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        return $this->sendRequest($this->createRequest(self::OPTIONS, $uri));
     }
 
     /**
@@ -223,6 +203,52 @@ final class Http implements ClientInterface, HttpInterface
      */
     public function trace(UriInterface $uri): ResponseInterface
     {
-        return $this->sendRequest($this->request());
+        return $this->sendRequest($this->createRequest(self::TRACE, $uri));
+    }
+
+    /**
+     * Issue a GraphQL query request.
+     *
+     * @param string $query The GraphQL query string
+     * @param array<string,mixed> $variables Query variables to be included
+     * @param string $operationName Specified operation. Only required if multiple operations are present in the query
+     */
+    public function graphql(string $query, array $variables = [], string $operationName = ''): ResponseInterface
+    {
+        # FIXME: request factory doesn't work so hot here for the URI
+        return $this->post(
+            $this->createRequest(self::POST, '')->getUri(),
+            'application/json',
+            json_encode(array_filter(compact(
+                'query',
+                'variables',
+                'operationName'
+            ))),
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createRequest(string $method, $uri): RequestInterface
+    {
+        if (!\is_string($uri) and !$uri instanceof UriInterface) {
+            throw new TypeError(sprintf(
+                'Arguments 2 passed to %s must be of the type %s, %s given',
+                __FUNCTION__,
+                implode('|', ['string', UriInterface::class]),
+                gettype($uri),
+            ));
+        }
+
+        return ($this->request)($method, $uri);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+    {
+        return ($this->response)($code, $reasonPhrase);
     }
 }
