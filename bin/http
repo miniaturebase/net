@@ -7,22 +7,39 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response\JsonResponse;
-use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Minibase\Net\Http;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 $http = new Http(
-    static fn (): RequestInterface => new Request(),
-    static fn (...$args): ResponseInterface => new JsonResponse(...$args),
+    static fn (): RequestInterface =>
+        new Request(headers: ['content-type' => 'application/json']),
+    static fn (mixed $body, int $code): ResponseInterface =>
+        new JsonResponse((is_string($body)) ? json_decode($body) : $body, $code),
 );
+
+$api = new Uri('http://localhost:3000');
+
+# $request = $http->createRequest(Http::POST, $api);
+/** @var JsonResponse $response */
+# $response = $http->sendRequest($request)
+# $response = $http->createResponse(Http::OK)->withPayload([]);
+# $response = $http->head($api);
+# $response = $http->get($api->withQuery('?foo=bar'));
+# $response = $http->post($api, '{"foo": "bar"}');
+# $response = $http->put($api->withQuery('?foo=bar'), '{"baz": "qux"}');
+# $response = $http->patch($api->withQuery('?foo=bar'), '{"baz": "qux"}');
+# $response = $http->delete($api);
+# $response = $http->options($api);
+# $response = $http->connect($api); # FIXME: broken?
+# $response = $http->trace($api);
+
+dump(json_decode($response->getBody()->getContents()));
 
 # $api = new Uri('https://jsonplaceholder.typicode.com');
 # $response = $http->get($api->withPath('posts')->withQuery('?_limit=1'));
 # dump(Http::OK === $response->getStatusCode());
 
-$api = new Uri('http://localhost:3000');
-$response = $http->post($api, 'application/json', '{"foo": "bar"}');
-
-dump(json_decode(json_decode($response->getBody()->getContents())));
+# $graphql = new Uri('http://localhost/graphql');
+# $response = $http->post($graphql, json_encode(['query' => '{}']));

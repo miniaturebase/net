@@ -22,6 +22,13 @@ use TypeError;
  */
 final class Http implements HttpInterface, ClientInterface, RequestFactoryInterface, ResponseFactoryInterface
 {
+    # /**
+    #  * Network transport implementation, such as cURL, streams, etc.
+    #  */
+    # private $transport;
+
+    private $body;
+
     /**
      * Create a new HTTP handler.
      *
@@ -32,7 +39,7 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
         private Closure $request,
         private Closure $response,
     ) {
-        // ...
+        # $this->transport = new Curl();
     }
 
     /**
@@ -78,26 +85,28 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
                 $headers,
             ),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false, # TODO: parse headers manually
+            CURLOPT_HEADER => self::HEAD === $method, # TODO: parse headers manually
         ]);
 
         $transfer = curl_exec($handle);
-        $error = array_filter([curl_errno($handle), curl_error($handle)]);
+        $code = curl_errno($handle);
+        $error = array_filter([$code, (0 < $code) ? curl_strerror($code) : null]);
 
         curl_close($handle);
 
         if (false === $transfer or !empty($error)) {
-            throw new NetworkException($request, $error[1], $error[0]);
+            throw new NetworkException(
+                $request,
+                sprintf('(%d) %s', $error[0], $error[1]),
+                $error[0],
+            );
         }
 
         # CURLINFO_EFFECTIVE_URL
         # CURLINFO_REQUEST_SIZE
         $code = curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+        $this->body = $transfer;
         $response = $this->createResponse($code, self::PHRASES[$code] ?? '');
-        $body = $response->getBody();
-
-        $body->write($transfer);
-        $body->rewind();
 
         return $response;
     }
@@ -250,6 +259,6 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        return ($this->response)($code, $reasonPhrase);
+        return ($this->response)($this->body, $code, $reasonPhrase);
     }
 }
