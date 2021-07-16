@@ -40,6 +40,7 @@ final class Http implements HttpInterface, ClientInterface, RequestFactoryInterf
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
+        # IDEA: abstract transports akin to Guzzle handlers (curl, streams, etc)
         $handle = curl_init((string) $request->getUri());
 
         if (false === $handle) {
