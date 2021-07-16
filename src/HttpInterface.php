@@ -211,17 +211,17 @@ interface HttpInterface
     /**
      * Issue an HTTP `POST` request to the given URI.
      */
-    public function post(UriInterface $uri, string $contentType, StreamInterface $body): ResponseInterface;
+    public function post(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface;
 
     /**
      * Issue an HTTP `PUT` request to the given URI.
      */
-    public function put(UriInterface $uri, string $contentType, StreamInterface $body): ResponseInterface;
+    public function put(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface;
 
     /**
      * Issue an HTTP `PATCH` request to the given URI.
      */
-    public function patch(UriInterface $uri, string $contentType, StreamInterface $body): ResponseInterface;
+    public function patch(UriInterface $uri, string $contentType, string|StreamInterface $body): ResponseInterface;
 
     /**
      * Issue an HTTP `DELETE` request to the given URI.
