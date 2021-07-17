@@ -50,6 +50,7 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
         private Closure $response,
     ) {
         # $this->transport = new Curl();
+        $this->body = null;
     }
 
     /**
