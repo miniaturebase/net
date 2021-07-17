@@ -10,6 +10,7 @@ lock: vendor
 
 stan: vendor ## Analyze the source code and manifest document(s)
 	@composer validate
+	@vendor/bin/patrol
 	@composer normalize --dry-run
 	@vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --ansi -vvv --dry-run
 	@vendor/bin/phpinsights \

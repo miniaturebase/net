@@ -20,6 +20,7 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "laminas/laminas-diactoros": "^2.6",
         "marcocesarato/php-conventional-changelog": "^1.10",
+        "nunomaduro/patrol": "^1.0",
         "nunomaduro/phpinsights": "^2.0",
         "pestphp/pest": "^1.10",
         "phpunit/phpunit": "^9.5",
