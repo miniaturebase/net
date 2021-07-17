@@ -11,16 +11,17 @@ lock: vendor
 stan: vendor ## Analyze the source code and manifest document(s)
 	@composer validate
 	@composer normalize --dry-run
-	@vendor/bin/phpcs fix --config=.php_cs --show-progress=dots --ansi -vvv --dry-run
-	@vendor/bin/phpinsights --no-interaction \
-		--min-quality=70 \
-		--min-complexity=90 \
-		--min-architecture=70 \
+	@vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --ansi -vvv --dry-run
+	@vendor/bin/phpinsights \
+		--no-interaction \
+		--min-quality=90 \
+		--min-complexity=80 \
+		--min-architecture=90 \
 		--min-style=90
 
 style: vendor ## Format the source code and other documents in the repository
 	@composer normalize
-	@vendor/bin/php-cs-fixer --show-progress=dots --ansi -vvv
+	@vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --ansi -vvv
 
 test: vendor ## Run tests
 	@vendor/bin/pest --configuration=phpunit.xml --color=always

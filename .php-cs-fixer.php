@@ -135,7 +135,8 @@ return $config
       'binary_operator_spaces' => [
         'default' => 'single_space',
         'operators' => [
-          '=>' => 'align'
+          '=>' => 'align',
+          '|' => 'no_space',
         ]
       ],
 
@@ -466,7 +467,7 @@ return $config
       |
       */
       'method_argument_space' => [
-        'ensure_fully_multiline' => true,
+        'on_multiline' => 'ensure_fully_multiline',
         'keep_multiple_spaces_after_comma' => false,
       ],
 
@@ -793,7 +794,7 @@ return $config
       'object_operator_without_whitespace' => true,
 
       'ordered_class_elements' => [
-          'sortAlgorithm' => 'alpha',
+          'sort_algorithm' => 'alpha',
           'order' => [
               'use_trait',
               'constant',
@@ -835,12 +836,13 @@ return $config
       |
       */
       'ordered_imports' => [
-        'importsOrder' => null,
-        'sortAlgorithm' => 'alpha',
+        'imports_order' => null,
+        'sort_algorithm' => 'alpha',
       ],
 
       // TODO: PHPUnit Rules
-      // TODO: PHPDoc Rules
+
+      'phpdoc_align' => ['align' => 'vertical'],
 
       /*
       |----------------------------------------------------------------------
