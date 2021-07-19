@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types = 1);
+
+use Minibase\Net\Http;
+use React\Http\Message\Response;
+use React\Http\Message\ServerRequest;
+use React\Http\Server;
+use React\Socket\Server as Socket;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$server = new Server(fn (ServerRequest $request): Response =>
+    new Response(Http::OK, ['Content-Type' => 'text/plain'], "Hello, World!\n"));
+
+$server->listen(new Socket('127.0.0.1:8080'));
+
+echo "Server running at http://127.0.0.1:8080" . PHP_EOL;
