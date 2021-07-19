@@ -57,12 +57,48 @@ interface HttpSpecification
     public const BAD_GATEWAY = 502;
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 400 Bad Request response status
+     * code indicates that the server cannot or will not process the request due
+     * to something that is perceived to be a client error (e.g., malformed
+     * request syntax, invalid request message framing, or deceptive request
+     * routing).
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+     */
+    public const BAD_REQUEST = 400;
+
+    /**
+     * A non-standard status code introduced by nginx for the case when a client
+     * closes the connection while nginx is processing the request.
+     *
+     * @see https://httpstatuses.com/499
+     */
+    public const CLIENT_CLOSED_REQUEST = 499;
+
+    /**
+     * The HTTP 409 Conflict response status code indicates a request conflict
+     * with current state of the target resource.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409
+     */
+    public const CONFLICT = 409;
+
+    /**
      * The HTTP CONNECT method starts two-way communications with the requested
      * resource. It can be used to open a tunnel.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
      */
     public const CONNECT = 'CONNECT';
+
+    /**
+     * A non-standard status code used to instruct nginx to close the connection
+     * without sending a response to the client, most commonly used to deny
+     * malicious or malformed requests.
+     *
+     * @see https://httpstatuses.com/444
+     */
+    public const CONNECTION_CLOSED_WITHOUT_RESPONSE = 444;
 
     /**
      * The HTTP 100 Continue informational status response code indicates that
@@ -101,6 +137,30 @@ interface HttpSpecification
     public const EARLY_HINTS = 103;
 
     /**
+     * The HTTP 417 Expectation Failed client error response code indicates that
+     * the expectation given in the request's Expect header could not be met.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/417
+     */
+    public const EXPECTATION_FAILED = 417;
+
+    /**
+     * The method could not be performed on the resource because the requested
+     * action depended on another action and that action failed.
+     *
+     * @see https://httpstatuses.com/424
+     */
+    public const FAILED_DEPENDENCY = 424;
+
+    /**
+     * The HTTP 403 Forbidden client error status response code indicates that
+     * the server understood the request but refuses to authorize it.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+     */
+    public const FORBIDDEN = 403;
+
+    /**
      * The HyperText Transfer Protocol (HTTP) 302 Found redirect status response
      * code indicates that the resource requested has been temporarily moved to
      * the URL given by the Location header. A browser redirects to this page
@@ -132,6 +192,15 @@ interface HttpSpecification
     public const GET = 'GET';
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 410 Gone client error response
+     * code indicates that access to the target resource is no longer available
+     * at the origin server and that this condition is likely to be permanent.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/410
+     */
+    public const GONE = 410;
+
+    /**
      * The HTTP HEAD method requests the headers that would be returned if the
      * HEAD request's URL was instead requested with the HTTP GET method. For
      * example, if a URL might produce a large download, a HEAD request could
@@ -150,6 +219,16 @@ interface HttpSpecification
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/505
      */
     public const HTTP_VERSION_NOT_SUPPORTED = 505;
+
+    /**
+     * The HTTP 418 I'm a teapot client error response code indicates that the
+     * server refuses to brew coffee because it is, permanently, a teapot. A
+     * combined coffee/tea pot that is temporarily out of coffee should instead
+     * return 503.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418
+     */
+    public const IM_A_TEAPOT = 418;
 
     /**
      * The server has fulfilled a GET request for the resource, and the response
@@ -183,6 +262,22 @@ interface HttpSpecification
     public const INTERNAL_SERVER_ERROR = 500;
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 411 Length Required client error
+     * response code indicates that the server refuses to accept the request
+     * without a defined Content-Length header.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/411
+     */
+    public const LENGTH_REQUIRED = 411;
+
+    /**
+     * The source or destination resource of a method is locked.
+     *
+     * @see https://httpstatuses.com/423
+     */
+    public const LOCKED = 423;
+
+    /**
      * The HyperText Transfer Protocol (HTTP) 508 Loop Detected response status
      * code may be given in the context of the Web Distributed Authoring and
      * Versioning (WebDAV) protocol.
@@ -190,6 +285,25 @@ interface HttpSpecification
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/508
      */
     public const LOOP_DETECTED = 508;
+
+    /**
+     * The HyperText Transfer Protocol (HTTP) 405 Method Not Allowed response
+     * status code indicates that the request method is known by the server but
+     * is not supported by the target resource.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
+     */
+    public const METHOD_NOT_ALLOWED = 405;
+
+    /**
+     * The request was directed at a server that is not able to produce a
+     * response. This can be sent by a server that is not configured to produce
+     * responses for the combination of scheme and authority that are included
+     * in the request URI.
+     *
+     * @see https://httpstatuses.com/421
+     */
+    public const MISDIRECTED_REQUEST = 421;
 
     /**
      * The HyperText Transfer Protocol (HTTP) 301 Moved Permanently redirect
@@ -249,6 +363,18 @@ interface HttpSpecification
     public const NON_AUTHORITATIVE_INFO = 203;
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 406 Not Acceptable client error
+     * response code indicates that the server cannot produce a response
+     * matching the list of acceptable values defined in the request's proactive
+     * content negotiation headers, and that the server is unwilling to supply a
+     * default representation.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406
+     * @link https://www.youtube.com/watch?v=Q-WHRJPlL5g
+     */
+    public const NOT_ACCEPTABLE = 406;
+
+    /**
      * The HyperText Transfer Protocol (HTTP)  510 Not Extended response status
      * code is sent in the context of the HTTP Extension Framework, defined in
      * RFC 2774.
@@ -257,6 +383,16 @@ interface HttpSpecification
      * @see https://datatracker.ietf.org/doc/html/rfc2774
      */
     public const NOT_EXTENDED = 510;
+
+    /**
+     * The HTTP 404 Not Found client error response code indicates that the
+     * server can't find the requested resource. Links that lead to a 404 page
+     * are often called broken or dead links and can be subject to link rot.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+     * @see https://en.wikipedia.org/wiki/Link_rot
+     */
+    public const NOT_FOUND = 404;
 
     /**
      * The HyperText Transfer Protocol (HTTP) 501 Not Implemented server error
@@ -313,6 +449,25 @@ interface HttpSpecification
     public const PATCH = 'PATCH';
 
     /**
+     * The HTTP 413 Payload Too Large response status code indicates that the
+     * request entity is larger than limits defined by server; the server might
+     * close the connection or return a Retry-After header field.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413
+     */
+    public const PAYLOAD_TOO_LARGE = 413;
+
+    /**
+     * The HTTP 402 Payment Required is a nonstandard client error status
+     * response code that is reserved for future use. Sometimes, this code
+     * indicates that the request can not be processed until the client makes a
+     * payment.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+     */
+    public const PAYMENT_REQUIRED = 402;
+
+    /**
      * This means that the resource is now permanently located at another URI,
      * specified by the `Location:` HTTP Response header. This has the same
      * semantics as the `301 Moved Permanently` HTTP response code, with the
@@ -330,41 +485,71 @@ interface HttpSpecification
      * @var array<int,string>
      */
     public const PHRASES = [
-        self::CONTINUE               => 'Continue',
-        self::SWITCHING_PROTOCOLS    => 'Switching Protocols',
-        self::PROCESSING             => 'Processing',
-        self::EARLY_HINTS            => 'Early Hints',
-        self::OK                     => 'OK',
-        self::CREATED                => 'Created',
-        self::ACCEPTED               => 'Accepted',
-        self::NON_AUTHORITATIVE_INFO => 'Non-Authoritative Information',
-        self::NO_CONTENT             => 'No Content',
-        self::RESET_CONTENT          => 'Reset Content',
-        self::PARTIAL_CONTENT        => 'Partial Content',
-        self::MULTI_STATUS           => 'Multi-Status',
-        self::ALREADY_REPORTED       => 'Already Reported',
-        self::IM_USED                => 'IM Used',
-        self::MULTIPLE_CHOICES       => 'Multiple Choice',
-        self::MOVED_PERMANENTLY      => 'Moved Permanently',
-        self::FOUND                  => 'Found',
-        self::SEE_OTHER              => 'See Other',
-        self::NOT_MODIFIED           => 'Not Modified',
-        self::USE_PROXY              => 'Use Proxy',
-        self::UNUSED                 => 'unused',
-        self::TEMPORARY_REDIRECT     => 'Temporary Redirect',
-        self::PERMANENT_REDIRECT     => 'Permanent Redirect',
-        # TODO: 4XX – Client Error Codes
-        self::INTERNAL_SERVER_ERROR           => 'Internal Server Error',
-        self::NOT_IMPLEMENTED                 => 'Not Implemented',
-        self::BAD_GATEWAY                     => 'Bad Gateway',
-        self::SERVICE_UNAVAILABLE             => 'Service Unavailable',
-        self::GATEWAY_TIMEOUT                 => 'Gateway Timeout',
-        self::HTTP_VERSION_NOT_SUPPORTED      => 'HTTP Version Not Supported',
-        self::VARIANT_ALSO_NEGOTIATES         => 'Variant Also Negotiates',
-        self::INSUFFICIENT_STORAGE            => 'Insufficient Storage',
-        self::LOOP_DETECTED                   => 'Loop Detected',
-        self::NOT_EXTENDED                    => 'Not Extended',
-        self::NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required',
+        self::CONTINUE                           => 'Continue',
+        self::SWITCHING_PROTOCOLS                => 'Switching Protocols',
+        self::PROCESSING                         => 'Processing',
+        self::EARLY_HINTS                        => 'Early Hints',
+        self::OK                                 => 'OK',
+        self::CREATED                            => 'Created',
+        self::ACCEPTED                           => 'Accepted',
+        self::NON_AUTHORITATIVE_INFO             => 'Non-Authoritative Information',
+        self::NO_CONTENT                         => 'No Content',
+        self::RESET_CONTENT                      => 'Reset Content',
+        self::PARTIAL_CONTENT                    => 'Partial Content',
+        self::MULTI_STATUS                       => 'Multi-Status',
+        self::ALREADY_REPORTED                   => 'Already Reported',
+        self::IM_USED                            => 'IM Used',
+        self::MULTIPLE_CHOICES                   => 'Multiple Choices',
+        self::MOVED_PERMANENTLY                  => 'Moved Permanently',
+        self::FOUND                              => 'Found',
+        self::SEE_OTHER                          => 'See Other',
+        self::NOT_MODIFIED                       => 'Not Modified',
+        self::USE_PROXY                          => 'Use Proxy',
+        self::SWITCH_PROXY                       => 'Switch Proxy',
+        self::TEMPORARY_REDIRECT                 => 'Temporary Redirect',
+        self::PERMANENT_REDIRECT                 => 'Permanent Redirect',
+        self::BAD_REQUEST                        => 'Bad Request',
+        self::UNAUTHORIZED                       => 'Unauthorized',
+        self::PAYMENT_REQUIRED                   => 'Payment Required',
+        self::FORBIDDEN                          => 'Forbidden',
+        self::NOT_FOUND                          => 'Not Found',
+        self::METHOD_NOT_ALLOWED                 => 'Method Not Allowed',
+        self::NOT_ACCEPTABLE                     => 'Not Acceptable',
+        self::PROXY_AUTHENTICATION_REQUIRED      => 'Proxy Authentication Required',
+        self::REQUEST_TIMEOUT                    => 'Request Timeout',
+        self::CONFLICT                           => 'Conflict',
+        self::GONE                               => 'Gone',
+        self::LENGTH_REQUIRED                    => 'Length Required',
+        self::PRECONDITION_FAILED                => 'Precondition Failed',
+        self::PAYLOAD_TOO_LARGE                  => 'Payload Too Large',
+        self::URI_TOO_LONG                       => 'URI Too Long',
+        self::UNSUPPORTED_MEDIA_TYPE             => 'Unsupported Media Type',
+        self::REQUESTED_RANGE_NOT_SATISFIABLE    => 'Range Not Satisfiable',
+        self::EXPECTATION_FAILED                 => 'Expectation Failed',
+        self::IM_A_TEAPOT                        => 'I\'m a teapot',
+        self::MISDIRECTED_REQUEST                => 'Misdirected Request',
+        self::UNPROCESSABLE_ENTITY               => 'Unprocessable Entity',
+        self::LOCKED                             => 'Locked',
+        self::FAILED_DEPENDENCY                  => 'Failed Dependency',
+        self::TOO_EARLY                          => 'Too Early',
+        self::UPGRADE_REQURED                    => 'Upgrade Required',
+        self::PRECONDITION_REQUIRED              => 'Precondition Required',
+        self::TOO_MANY_REQUESTS                  => 'Too Many Requests',
+        self::REQUEST_HEADER_FIELDS_TOO_LARGE    => 'Request Header Fields Too Large',
+        self::CONNECTION_CLOSED_WITHOUT_RESPONSE => 'Connection Closed Without Response',
+        self::UNAVAILABLE_FOR_LEGAL_REASONS      => 'Unavailable For Legal Reasons',
+        self::CLIENT_CLOSED_REQUEST              => 'Client Closed Request',
+        self::INTERNAL_SERVER_ERROR              => 'Internal Server Error',
+        self::NOT_IMPLEMENTED                    => 'Not Implemented',
+        self::BAD_GATEWAY                        => 'Bad Gateway',
+        self::SERVICE_UNAVAILABLE                => 'Service Unavailable',
+        self::GATEWAY_TIMEOUT                    => 'Gateway Timeout',
+        self::HTTP_VERSION_NOT_SUPPORTED         => 'HTTP Version Not Supported',
+        self::VARIANT_ALSO_NEGOTIATES            => 'Variant Also Negotiates',
+        self::INSUFFICIENT_STORAGE               => 'Insufficient Storage',
+        self::LOOP_DETECTED                      => 'Loop Detected',
+        self::NOT_EXTENDED                       => 'Not Extended',
+        self::NETWORK_AUTHENTICATION_REQUIRED    => 'Network Authentication Required',
     ];
 
     /**
@@ -376,6 +561,25 @@ interface HttpSpecification
     public const POST = 'POST';
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 412 Precondition Failed client
+     * error response code indicates that access to the target resource has been
+     * denied. This happens with conditional requests on methods other than GET
+     * or HEAD when the condition defined by the If-Unmodified-Since or
+     * If-None-Match headers is not fulfilled.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/412
+     */
+    public const PRECONDITION_FAILED = 412;
+
+    /**
+     * The HTTP 428 Precondition Required response status code indicates that
+     * the server requires the request to be conditional.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/428
+     */
+    public const PRECONDITION_REQUIRED = 428;
+
+    /**
      * An interim response used to inform the client that the server has
      * accepted the complete request, but has not yet completed it.
      *
@@ -384,12 +588,53 @@ interface HttpSpecification
     public const PROCESSING = 102;
 
     /**
+     * The HTTP 407 Proxy Authentication Required client error status response
+     * code indicates that the request has not been applied because it lacks
+     * valid authentication credentials for a proxy server that is between the
+     * browser and the server that can access the requested resource.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/407
+     */
+    public const PROXY_AUTHENTICATION_REQUIRED = 407;
+
+    /**
      * The HTTP PUT request method creates a new resource or replaces a
      * representation of the target resource with the request payload.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
      */
     public const PUT = 'PUT';
+
+    /**
+     * The HTTP 431 Request Header Fields Too Large response status code
+     * indicates that the server refuses to process the request because the
+     * request’s HTTP headers are too long. The request may be resubmitted after
+     * reducing the size of the request headers.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/431
+     */
+    public const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
+
+    /**
+     * The HyperText Transfer Protocol (HTTP) 408 Request Timeout response
+     * status code means that the server would like to shut down this unused
+     * connection. It is sent on an idle connection by some servers, even
+     * without any previous request by the client.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408
+     */
+    public const REQUEST_TIMEOUT = 408;
+
+    /**
+     * The HyperText Transfer Protocol (HTTP) 416 Range Not Satisfiable error
+     * response code indicates that a server cannot serve the requested ranges.
+     * The most likely reason is that the document doesn't contain such ranges,
+     * or that the Range header value, though syntactically correct, doesn't
+     * make sense.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/416
+     */
+    public const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 
     /**
      * The HTTP 205 Reset Content response status tells the client to reset the
@@ -422,6 +667,14 @@ interface HttpSpecification
     public const SERVICE_UNAVAILABLE = 503;
 
     /**
+     * This response code is no longer used; it is just reserved. It was used
+     * in a previous version of the HTTP/1.1 specification.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#redirection_messages
+     */
+    public const SWITCH_PROXY = 306;
+
+    /**
      * The HTTP 101 Switching Protocols response code indicates the protocol the
      * server is switching to as requested by a client which sent the message
      * including the Upgrade request header.
@@ -443,6 +696,23 @@ interface HttpSpecification
     public const TEMPORARY_REDIRECT = 307;
 
     /**
+     * The HyperText Transfer Protocol (HTTP) 425 Too Early response status code
+     * indicates that the server is unwilling to risk processing a request that
+     * might be replayed, which creates the potential for a replay attack.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/425
+     */
+    public const TOO_EARLY = 425;
+
+    /**
+     * The HTTP 429 Too Many Requests response status code indicates the user
+     * has sent too many requests in a given amount of time ("rate limiting").
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+     */
+    public const TOO_MANY_REQUESTS = 429;
+
+    /**
      * The HTTP TRACE method performs a message loop-back test along the path to
      * the target resource, providing a useful debugging mechanism.
      *
@@ -451,12 +721,61 @@ interface HttpSpecification
     public const TRACE = 'TRACE';
 
     /**
-     * This response code is no longer used; it is just reserved. It was used
-     * in a previous version of the HTTP/1.1 specification.
+     * The HTTP 401 Unauthorized client error status response code indicates
+     * that the request has not been applied because it lacks valid
+     * authentication credentials for the target resource.
      *
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#redirection_messages
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
      */
-    public const UNUSED = 306;
+    public const UNAUTHORIZED = 401;
+
+    /**
+     * The HyperText Transfer Protocol (HTTP) 451 Unavailable For Legal Reasons
+     * client error response code indicates that the user requested a resource
+     * that is not available due to legal reasons, such as a web page for which
+     * a legal action has been issued.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/451
+     */
+    public const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+
+    /**
+     * The HyperText Transfer Protocol (HTTP) 422 Unprocessable Entity response
+     * status code indicates that the server understands the content type of the
+     * request entity, and the syntax of the request entity is correct, but it
+     * was unable to process the contained instructions.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
+     */
+    public const UNPROCESSABLE_ENTITY = 422;
+
+    /**
+     * The HTTP 415 Unsupported Media Type client error response code indicates
+     * that the server refuses to accept the request because the payload format
+     * is in an unsupported format.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/415
+     */
+    public const UNSUPPORTED_MEDIA_TYPE = 415;
+
+    /**
+     * The HTTP 426 Upgrade Required client error response code indicates that
+     * the server refuses to perform the request using the current protocol but
+     * might be willing to do so after the client upgrades to a different
+     * protocol.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426
+     */
+    public const UPGRADE_REQURED = 426;
+
+    /**
+     * The HTTP 414 URI Too Long response status code indicates that the URI
+     * requested by the client is longer than the server is willing to
+     * interpret.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/414
+     */
+    public const URI_TOO_LONG = 414;
 
     /**
      * Defined in a previous version of the HTTP specification to indicate that
