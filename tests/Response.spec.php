@@ -40,6 +40,6 @@ it('creates responses', function (int $code, string $reason): void {
         ->toBe($code)
         ->and($response->getReasonPhrase())
         ->toBe($reason);
-})->with([
-    Http::OK => [Http::OK, Http::PHRASES[Http::OK]],
-]);
+})->with(
+    'codes.all',
+);
