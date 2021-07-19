@@ -96,6 +96,7 @@ dataset('codes.server', fn () => yield from [
     Http::NETWORK_AUTHENTICATION_REQUIRED => $reason(Http::NETWORK_AUTHENTICATION_REQUIRED),
 ]);
 
+# NOTE: combining all datasets causes OOM
 dataset('codes.all', fn () => yield from [
     # 1XX - Informational
     Http::CONTINUE            => $reason(Http::CONTINUE),
