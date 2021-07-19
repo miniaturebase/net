@@ -10,6 +10,7 @@
     ],
     "require": {
         "php": "^8.0",
+        "ext-curl": "*",
         "ext-json": "*",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
