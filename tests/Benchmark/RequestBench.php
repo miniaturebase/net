@@ -35,11 +35,6 @@ class RequestBench
         );
     }
 
-    private function makeRequest(): Request
-    {
-        return $this->request ??= $this->http->createRequest(Http::GET, $this->uri);
-    }
-
     #[Bench\BeforeMethods('setUp')]
     #[Bench\Assert('mode(variant.time.avg) < 200 ms')]
     public function benchCreateRequest()
@@ -52,5 +47,10 @@ class RequestBench
     public function benchSendRequest()
     {
         $this->http->sendRequest($this->makeRequest());
+    }
+
+    private function makeRequest(): Request
+    {
+        return $this->request ??= $this->http->createRequest(Http::GET, $this->uri);
     }
 }
