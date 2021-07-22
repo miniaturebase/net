@@ -50,6 +50,7 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
         private Closure $response,
     ) {
         # $this->transport = new Curl();
+        $this->body = null;
     }
 
     /**
@@ -122,7 +123,7 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
      */
     public function patch(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        return $this->mutation($this->createRequest(self::PATCH, $uri), $body);
+        return $this->write($this->createRequest(self::PATCH, $uri), $body);
     }
 
     /**
@@ -130,7 +131,7 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
      */
     public function post(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        return $this->mutation($this->createRequest(self::POST, $uri), $body);
+        return $this->write($this->createRequest(self::POST, $uri), $body);
     }
 
     /**
@@ -138,7 +139,7 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
      */
     public function put(UriInterface $uri, string|StreamInterface $body): ResponseInterface
     {
-        return $this->mutation($this->createRequest(self::PUT, $uri), $body);
+        return $this->write($this->createRequest(self::PUT, $uri), $body);
     }
 
     /**
@@ -156,22 +157,6 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
         $method = strtoupper(trim($request->getMethod()));
         $headers = $request->getHeaders();
 
-        if (self::GET === $method) {
-            curl_setopt($handle, CURLOPT_HTTPGET, true);
-        } elseif (self::POST === $method) {
-            curl_setopt($handle, CURLOPT_POST, true);
-        } else {
-            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $method);
-        }
-
-        if (in_array($method, [self::POST, self::PUT, self::PATCH], true)) {
-            curl_setopt(
-                $handle,
-                CURLOPT_POSTFIELDS,
-                $request->getBody()->getContents()
-            );
-        }
-
         curl_setopt_array($handle, [
             CURLOPT_ENCODING     => '',
             CURLOPT_MAXREDIRS    => 8,
@@ -185,6 +170,19 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => self::HEAD === $method, # TODO: parse headers manually
         ]);
+        curl_setopt($handle, ... match ($method) {
+            self::GET  => [CURLOPT_HTTPGET, true],
+            self::POST => [CURLOPT_POST, true],
+            default    => [CURLOPT_CUSTOMREQUEST, $method],
+        });
+
+        if (in_array($method, [self::POST, self::PUT, self::PATCH], true)) {
+            curl_setopt(
+                $handle,
+                CURLOPT_POSTFIELDS,
+                $request->getBody()->getContents()
+            );
+        }
 
         $transfer = curl_exec($handle);
         $code = curl_errno($handle);
@@ -216,7 +214,10 @@ final class Http implements HttpSpecification, ClientInterface, RequestFactoryIn
         return $this->sendRequest($this->createRequest(self::TRACE, $uri));
     }
 
-    private function mutation(RequestInterface $request, string|StreamInterface $body): ResponseInterface
+    /**
+     * Write a body to a request which modifies a resource on the server.
+     */
+    private function write(RequestInterface $request, string|StreamInterface $body): ResponseInterface
     {
         if ($body instanceof StreamInterface) {
             $request->withBody($body);

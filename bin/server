@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types = 1);
+
+use Minibase\Net\Http;
+use React\Http\Message\Response;
+use React\Http\Message\ServerRequest;
+use React\Http\Server;
+use React\Socket\Server as Socket;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$server = new Server(function (ServerRequest $request): Response {
+    $response = new Response(Http::OK, ['Content-Type' => 'text/plain'], "Hello, World!\n");
+
+    echo sprintf(
+        "[\033[38;5;6m%s\033[0m] \033[38;5;241m%s - \033[38;5;2m%d\033[0m\n",
+        $request->getMethod(),
+        (string) $request->getUri(),
+        $response->getStatusCode(),
+    );
+
+    return $response;
+});
+
+$server->listen(new Socket('127.0.0.1:8080'));
+
+echo "Server running at http://127.0.0.1:8080" . PHP_EOL;

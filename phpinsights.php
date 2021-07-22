@@ -21,6 +21,7 @@ return [
     ],
     'exclude' => [
         'bin/',
+        'examples/',
     ],
     'config' => [],
 ];

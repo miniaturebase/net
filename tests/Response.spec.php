@@ -13,10 +13,10 @@ declare(strict_types = 1);
  */
 
 use Laminas\Diactoros\Request;
-use Laminas\Diactoros\Response\TextResponse;
-use Laminas\Diactoros\Uri;
+use Laminas\Diactoros\Response;
 use Minibase\Net\Http;
-use Minibase\Net\NetworkError;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * This file is part of the minibase-app/net PHP library.
@@ -27,27 +27,19 @@ use Minibase\Net\NetworkError;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-/**
- * Return a closure that checks if the dev server is running.
- */
-function serverless(): Closure
-{
+it('creates responses', function (int $code, string $reason): void {
     $http = new Http(
-        fn ($verb, $uri) => new Request($uri, $verb),
-        fn ($body, $code) => new TextResponse($body, $code),
+        fn (): RequestInterface => new Request(),
+        fn ($_, int $status): ResponseInterface => new Response(status: $status),
     );
-    $server = new Uri('http://localhost:8080');
+    $response = $http->createResponse($code, $reason);
 
-    return function () use ($http, $server) {
-        $serverless = false;
-
-        try {
-            $http->get($server);
-        } catch (NetworkError $caught) {
-            $serverless = true;
-        }
-
-        return $serverless;
-    };
-}
+    expect($response)
+        ->toBeInstanceOf(Response::class)
+        ->and($response->getStatusCode())
+        ->toBe($code)
+        ->and($response->getReasonPhrase())
+        ->toBe($reason);
+})->with(
+    'codes.all',
+);
