@@ -12,16 +12,23 @@ declare(strict_types = 1);
  * file that was distributed with this source code.
  */
 
-use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
 use Minibase\Net\Http;
 use PhpBench\Attributes as Bench;
 
-class HttpBench
+class ResponseBench
 {
-    #[Bench\Assert('mode(variant.time.avg) < 200 ms')]
-    public function benchCreateRequests()
+    private Http $http;
+
+    public function setUp(): void
     {
-        $http = new Http(fn () => new Request(), fn () => null);
-        $http->createRequest(Http::GET, 'http://localhost');
+        $this->http = new Http(fn () => null, fn (): Response => new Response());
+    }
+
+    #[Bench\BeforeMethods('setUp')]
+    #[Bench\Assert('mode(variant.time.avg) < 200 ms')]
+    public function benchCreateResponse()
+    {
+        $this->http->createResponse(Http::OK);
     }
 }
