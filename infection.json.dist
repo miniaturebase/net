@@ -1,0 +1,15 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ],
+        "excludes": [
+            "examples",
+            "bin"
+        ]
+    },
+    "testFramework": "pest",
+    "mutators": {
+        "@default": true
+    }
+}

@@ -19,6 +19,7 @@
     "require-dev": {
         "ergebnis/composer-normalize": "^2.15",
         "friendsofphp/php-cs-fixer": "^3.0",
+        "infection/infection": "^0.23.0",
         "laminas/laminas-diactoros": "^2.6",
         "marcocesarato/php-conventional-changelog": "^1.10",
         "nunomaduro/patrol": "^1.0",
