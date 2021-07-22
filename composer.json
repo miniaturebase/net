@@ -24,6 +24,7 @@
         "nunomaduro/patrol": "^1.0",
         "nunomaduro/phpinsights": "^2.0",
         "pestphp/pest": "^1.10",
+        "phpbench/phpbench": "^1.0",
         "phpunit/phpunit": "^9.5",
         "react/react": "^1.2",
         "symfony/var-dumper": "^5.3"
