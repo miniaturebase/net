@@ -8,6 +8,13 @@ help: ## Show this help message
 bench: vendor ## Run benchmarks
 	@vendor/bin/phpbench run tests/Benchmark --report=aggregate
 
+cover: vendor ## Generate test coverage report(s)
+	@XDEBUG_MODE=coverage vendor/bin/pest \
+		--coverage \
+		--min=50 \
+		--coverage-xml=.coverage \
+		--log-junit=".coverage/junit.xml"
+
 infect: vendor ## Run mutation tests
 	@XDEBUG_MODE=coverage vendor/bin/infection --threads=4 --show-mutations
 
@@ -25,6 +32,9 @@ stan: vendor ## Analyze the source code and manifest document(s)
 		--min-complexity=80 \
 		--min-architecture=90 \
 		--min-style=90
+	@XDEBUG_MODE=coverage vendor/bin/pest \
+		--coverage \
+		--min=50
 
 style: vendor ## Format the source code and other documents in the repository
 	@composer normalize
