@@ -30,6 +30,6 @@ style: vendor ## Format the source code and other documents in the repository
 test: vendor ## Run tests
 	@vendor/bin/pest --configuration=phpunit.xml --color=always
 
-vendor: composer.json ## Install third-party dependencies
+vendor: composer.* ## Install third-party dependencies
 	@composer install --optimize-autoloader
 	@touch vendor/
