@@ -48,6 +48,21 @@ it('creates requests', function (string $method): void {
     'verbs',
 );
 
+it('only allows strings and UriInterfaces', function (mixed $value): void {
+    $http = new Http(fn () => null, fn () => null);
+
+    $http->createRequest(Http::GET, $value);
+})->throws(
+    TypeError::class,
+)->with(fn (): Generator => yield from [
+    'null' => null,
+    'int' => rand(),
+    'float' => 3.14159,
+    'array' => [],
+    'object' => (object) [],
+    'closure' => fn () => null,
+]);
+
 it('sends requests', function (string $method): void {
     match ($method) {
         Http::HEAD    => $this->markTestSkipped('seems to cause infinite loop with dev server'),
